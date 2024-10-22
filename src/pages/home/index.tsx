@@ -1,15 +1,27 @@
 import React, { useEffect, useRef, useState } from "react";
-import { SWATCHES } from "../../constants";
+import { SWATCHES } from "../../../constants";
 import { ColorSwatch, Group } from "@mantine/core";
 import { Button } from "../../components/ui/button";
+import axios from "axios";
 
+interface Response{
+    expr: string,
+    result: string,
+    assign: boolean,
+}
 
+interface GeneratedResult{
+    expresssion:string,
+    answer:string,
+}
 
 const Home = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
   const [color, setColor] = useState<string>(SWATCHES[0]);
   const [reset, setReset] = useState<boolean>(false);
+  const [result, setResult] = useState<GeneratedResult>();
+  const [dictOfVars, setDictOfVars] = useState<{[key:string]:string}>({});
 
   useEffect(() => {
     if (reset) {
@@ -80,6 +92,7 @@ const Home = () => {
       id="canvas"
       className="absolute top-0 left-0 w-full h-full"
       onMouseDown={startDrawing}
+      onMouseMove={draw}
       onMouseOut={stopDrawing}
       onMouseUp={stopDrawing}
     />
