@@ -1,8 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
+import { SWATCHES } from "../../constants";
+import { ColorSwatch, Group } from "@mantine/core";
+import { Button } from "../../components/ui/button";
+
+
 
 const Home = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
+  const [color, setColor] = useState<string>(SWATCHES[0]);
+  const [reset, setReset] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (reset) {
+      resetCanvas();
+      setReset(false);
+    }
+  });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -16,6 +30,17 @@ const Home = () => {
       }
     }
   }, []);
+
+  const resetCanvas = () => {
+    const canvas = canvasRef.current;
+
+    if(canvas){
+        const ctx = canvas.getContext("2d");
+        if(ctx){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+  }
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -42,7 +67,7 @@ const Home = () => {
     if (canvas) {
       const ctx = canvas.getContext("2d");
       if (ctx) {
-        ctx.strokeStyle = "white";
+        ctx.strokeStyle = color;
         ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
         ctx.stroke();
       }
